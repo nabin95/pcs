@@ -1,0 +1,185 @@
+﻿@model PCS.Models.EmployeeActionModel
+
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <div class="row" >
+        <div class="col">
+            <table>
+                <thead>
+                    <tr>
+                        <th>EmployeeId</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model.EmpList)
+                    {
+                        <tr>
+                            <td>@d.EmployeeId</td>
+                            <td>@d.EmpName</td>
+                        </tr>
+                        
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <form id="actionForm">
+
+                <div class="form-group">
+                    <label>Name*</label>
+                    <input class="form-control" name="EmpName" placeholder="Enter Name" id="EmpName" value="@Model.EmpName">
+                </div>
+                <div class="form-group" style="display:flex;">
+                    <label>Gender</label>
+
+                    <div class="gender">
+                        <input type="radio" name="demo" value="Male" /> Male
+                        <input type="radio" name="demo" value="Female" /> Female
+                        <input type="radio" name="demo" value="Others" /> Others
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label>DOB*</label>
+                    <input class="form-control" name="DOB" placeholder="DOB" id="DOB" value="@Model.DOB">
+                </div>
+                <div class="form-group">
+                    <label>Salary</label>
+                    <input class="form-control" name="Salary" placeholder="Salary" id="Salary" value="@Model.Salary">
+                </div>
+
+
+
+
+            </form>
+            Employee Qualifation
+            <div class="row" style="display:flex;">
+
+                <div class="col">
+                    <div class="form-group" style="display:flex;">
+
+                        <label>Qualifiction</label>
+                        <select class="form-control" name="QuId" id="myselect">
+                            @if (Model.QuLists != null)
+                            {
+                                foreach (var qu in Model.QuLists)
+                                {
+                                    <option value="@qu.QualificationId" @(qu.QualificationId == Model.QualificationId ? "Selected" : string.Empty)>
+                                        @qu.QName
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Marks</label>
+                    <input type="text" name="Marks" value="@Model.Marks" id="Marks" />
+                </div>
+                <div class="col">
+                    <button type="submit" id="AddButton">Add</button>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>QId</th>
+                        <th>QualificationName</th>
+                        <th>Marks</th>
+                    </tr>
+
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+
+            </table>
+
+            <div class="row">
+                <button type="submit" id="Savebutton">Submit </button>
+                <button id="delete">Cancel</button>
+            </div>
+        </div>
+    </div>
+   
+    </div>
+    <script>
+        var data = [];
+
+
+        $("#AddButton").click(function () {
+            var QualificationId = $("#myselect option:selected").val();
+            var QName = $("#myselect option:selected").text().trim();
+            var Marks = $("#Marks").val();
+            data.push({ QualificationId: QualificationId, QName: QName, Marks: Marks });
+
+            render();
+
+
+        });
+        var table = $("#tbl");
+
+
+        function render() {
+            if (data.length > 0) {
+                if (document.getElementById("tbody").childElementCount > 0) {
+                    $("#tbody").empty();
+                }
+
+                for (var i = 0; i < data.length; i++) {
+
+                    document.getElementById("tbody").innerHTML +=
+                        "<tr><td>" + data[i].QualificationId + "</td>" +
+                        "<td>" + data[i].QName + "</td>" +
+                        "<td>" + data[i].Marks + "</td>" +
+                        "</tr >";
+
+                }
+
+            }
+
+        }
+
+        $("#Savebutton").click(function () {
+            debugger;
+            var EmpName = $("#EmpName").val();
+            var Gender = $("input:radio[name=demo]:checked").val();
+            var DOB = $("#DOB").val();
+            var salary = $("#Salary").val();
+            var d = JSON.stringify(data);
+            $.ajax({
+                type: "post",
+                url: "/Employee/SaveEmployee",
+                data: { EmpName: EmpName, Gender: Gender, DOB: DOB, Salary: salary ,d:d},
+                success: function (data) {
+                    debugger;
+
+                }
+            })
+        })
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
